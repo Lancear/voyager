@@ -1,0 +1,24 @@
+{
+  "name": "voyager-ui",
+  "author": "Lancear",
+  "version": "1.0.0",
+  "private": "true",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "solid-devtools": "^0.29.2",
+    "typescript": "^5.6.3",
+    "vite": "^5.0.11",
+    "vite-plugin-solid": "^2.8.2"
+  },
+  "dependencies": {
+    "solid-js": "^1.8.11"
+  },
+  "packageManager": "pnpm@9.4.0"
+}
