@@ -107,4 +107,3 @@ export function fetchGitTree(identityOrUrl, options) {
     options,
   );
 }
-

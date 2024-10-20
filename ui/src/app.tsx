@@ -51,5 +51,3 @@ export function App() {
     </div>
   );
 }
-
-

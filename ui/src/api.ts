@@ -18,4 +18,3 @@ export async function fetchGitTree(sha: string): Promise<GitTree | undefined> {
   const res = await fetch("http://localhost:3300/git/trees/" + sha);
   return res.json();
 }
-
