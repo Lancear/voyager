@@ -1,6 +1,6 @@
 import { createEffect, createResource, createSignal, For } from "solid-js";
 import { fetchCommit, fetchCommits, fetchGitTree } from "./api";
-import { CommitTimeline } from "./components/commits/commit-timeline/commit-timeline";
+import { CommitHistory } from "./components/commits/commit-history/commit-history";
 import type { ListCommitsEntry } from "../../core/src/github";
 import { FileTree } from "./components/files/file-tree/file-tree";
 import { CommitDetails } from "./components/commits/commit-details";
@@ -20,7 +20,7 @@ export function App() {
   return (
     <div class="w-full h-screen p-2 flex gap-x-2 bg-zinc-300 ">
       <div class="relative h-full w-72 shrink-0 flex flex-col gap-2">
-        <CommitTimeline 
+        <CommitHistory 
           commits={commits} 
           selectedCommit={selectedCommit} 
           selectCommit={selectCommit} />

@@ -1,15 +1,15 @@
 import { createSignal, For, type Accessor, type Resource, type Setter } from "solid-js";
-import { CommitTimelineEntry } from "./commit-timeline-entry";
+import { CommitHistoryEntry } from "./commit-history-entry";
 import type { ListCommitsEntry } from "../../../../../core/src/github";
 import { cls } from "../../../base/styles";
 
-export interface CommitTimelineProps {
+export interface CommitHistoryProps {
   commits: Resource<ListCommitsEntry[]>;
   selectedCommit: Accessor<ListCommitsEntry | undefined>;
   selectCommit: Setter<ListCommitsEntry | undefined>;
 }
 
-export function CommitTimeline({ commits, selectedCommit, selectCommit }: CommitTimelineProps) {
+export function CommitHistory({ commits, selectedCommit, selectCommit }: CommitHistoryProps) {
   const [opened, open] = createSignal(true);
 
   return (
@@ -33,13 +33,13 @@ export function CommitTimeline({ commits, selectedCommit, selectCommit }: Commit
           stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
         </svg>
-        <p class="text-zinc-800 text-lg">Commit Timeline</p>
+        <p class="text-zinc-800 text-lg">Commit History</p>
       </div>
       {opened() && (
         <div class="w-full h-full py-1.5 flex flex-col overflow-auto">
           <For each={commits()}>
             {(commit) => (
-              <CommitTimelineEntry 
+              <CommitHistoryEntry 
                 commit={commit} 
                 selected={() => selectedCommit()?.sha === commit.sha} 
                 selectCommit={selectCommit} />

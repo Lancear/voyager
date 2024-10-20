@@ -3,13 +3,13 @@ import type { ListCommitsEntry } from "../../../../../core/src/github";
 import { formatDate, formatDateTime } from "../../../base/date";
 import { cls } from "../../../base/styles"
 
-export interface CommitTimelineEntryProps {
+export interface CommitHistoryEntryProps {
   commit: ListCommitsEntry;
   selected: Accessor<boolean>;
   selectCommit: Setter<ListCommitsEntry | undefined>;
 }
 
-export function CommitTimelineEntry({ commit, selected, selectCommit }: CommitTimelineEntryProps) {
+export function CommitHistoryEntry({ commit, selected, selectCommit }: CommitHistoryEntryProps) {
   return (
     <div class="py-0.5 px-1" data-sha={commit.sha}>
       <div 
