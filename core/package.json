@@ -1,0 +1,17 @@
+{
+  "name": "voyager",
+  "author": "Lancear",
+  "version": "1.0.0",
+  "private": "true",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node --env-file=../.env src/index.js",
+    "serve": "node --env-file=../.env src/server.js"
+  },
+  "packageManager": "pnpm@9.4.0",
+  "dependencies": {
+    "@hono/node-server": "^1.13.2",
+    "hono": "^4.6.5"
+  }
+}
