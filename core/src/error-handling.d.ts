@@ -11,4 +11,4 @@ export type SafeTryResult<T> =
 export function ensureErrorType(error: unknown, fallbackMessage: string): Error;
 export function addErrorContext(err: Error, context: object): Error;
 export function addErrorContext(err: unknown, fallbackMessage: string, context: object): Error;
-export function safeTry<T>(fn: () => T): SafeTryResult<T>;
+export function safeTry<T>(fn: () => T, fallbackMessage: string): SafeTryResult<T>;

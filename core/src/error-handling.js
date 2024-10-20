@@ -29,12 +29,11 @@ export function addErrorContext(err, fallbackMessageOrContext, context) {
 }
 
 /** @type {import("./error-handling.js").safeTry} */
-export function safeTry(fn) {
+export function safeTry(fn, fallbackMessage) {
   try {
     const data = fn();
     return { success: true, data };
   } catch (err) {
-    return { success: false, error: ensureErrorType(err) };
+    return { success: false, error: ensureErrorType(err, fallbackMessage) };
   }
 }
-
