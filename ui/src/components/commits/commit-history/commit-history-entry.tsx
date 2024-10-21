@@ -1,12 +1,12 @@
 import type { Accessor, Setter } from "solid-js";
-import type { ListCommitsEntry } from "../../../../../core/src/github";
+import type { FullCommit } from "../../../../../core/src/github";
 import { formatDate, formatDateTime } from "../../../base/date";
 import { cls } from "../../../base/styles"
 
 export interface CommitHistoryEntryProps {
-  commit: ListCommitsEntry;
+  commit: FullCommit;
   selected: Accessor<boolean>;
-  selectCommit: Setter<ListCommitsEntry | undefined>;
+  selectCommit: Setter<FullCommit | undefined>;
 }
 
 export function CommitHistoryEntry({ commit, selected, selectCommit }: CommitHistoryEntryProps) {

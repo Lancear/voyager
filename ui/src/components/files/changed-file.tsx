@@ -13,18 +13,20 @@ export function ChangedFile({ file }: ChangedFileProps) {
     <div>
       <div 
         onClick={() => open(o => !o)}
-        class="p-1 flex gap-1 items-center rounded cursor-pointer hover:bg-zinc-200 transition-all">
+        class="p-1 flex gap-1 items-center rounded cursor-pointer hover:bg-zinc-200 transition-all"
+      >
         <svg
-          class={cls("size-3  shrink-0 stroke-zinc-400", opened() && "rotate-90")}
+          class={cls("size-3 shrink-0 stroke-zinc-400", opened() && "rotate-90")}
           xmlns="http://www.w3.org/2000/svg" 
           fill="none" 
           viewBox="0 0 24 24" 
           stroke-width={1.5} 
-          stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          stroke="currentColor"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
         </svg>
-        <div class="flex gap-8">
-          <span class="w-96 text-zinc-600 text-sm">{file.filename}</span>
+        <div class="w-full flex gap-8">
+          <span class="w-96 grow text-zinc-600 text-sm">{file.filename}</span>
           <span class="w-14 text-zinc-500 text-sm">{file.status}</span>
           <span class="w-8 text-lime-700 text-sm">+{file.additions}</span>
           <span class="w-8 text-rose-700 text-sm">-{file.deletions}</span>

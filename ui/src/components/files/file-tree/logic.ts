@@ -1,34 +1,78 @@
-import type { GitTree } from "../../../../../core/src/github";
+import type { Commit, GitTree } from "../../../../../core/src/github";
 
-export type PathTree = Map<string, PathTree>;
+export interface PathTreeEntry {
+  name: string;
+  tree: PathTree;
+  path: string;
+  status?: string;
+}
 
-export function gitPathTree(gitTree: GitTree | undefined) {
+export type PathTree = Map<string, PathTreeEntry>;
+
+export function gitPathTree(
+  gitTree: GitTree | undefined,
+  changedFiles?: Commit["files"]
+) {
   if (!gitTree) return undefined;
 
   const pathTree: PathTree = new Map();
+
+  for (const file of changedFiles ?? []) {
+    let cursor = pathTree;
+    const pathParts = file.filename.split("/");
+
+    for (let idx = 0; idx < pathParts.length - 1; idx++) {
+      const name = pathParts[idx];
+
+      if (!cursor.has(name)) {
+        cursor.set(name, {
+          name: name,
+          path: pathParts.slice(0, idx + 1).join("/"),
+          tree: new Map(),
+        });
+      }
+
+      cursor = cursor.get(name)?.tree!;
+    }
+
+    const name = pathParts.at(-1)!;
+    cursor.set(name, {
+      name: name,
+      path: file.filename,
+      status: file.status,
+      tree: new Map(),
+    });
+  }
 
   for (const entry of gitTree.tree) {
     if (entry.type !== "blob") continue;
 
     let cursor = pathTree;
+    const pathParts = entry.path.split("/");
 
-    for (const part of entry.path.split("/")) {
-      if (!cursor.has(part)) {
-        cursor.set(part, new Map());
+    for (let idx = 0; idx < pathParts.length; idx++) {
+      const name = pathParts[idx];
+
+      if (!cursor.has(name)) {
+        cursor.set(name, {
+          name: name,
+          path: pathParts.slice(0, idx + 1).join("/"),
+          tree: new Map(),
+        });
       }
 
-      cursor = cursor.get(part)!;
+      cursor = cursor.get(name)?.tree!;
     }
   }
 
   return pathTree;
 }
 
-export function moveFoldersToTop(entries: [string, PathTree][] | undefined) {
-  return entries?.sort(([, a], [, b]) => {
-    if (a.size > 0 && b.size > 0) return 0;
-    if (a.size > 0) return -1;
-    if (b.size > 0) return 1;
-    return 0;
+export function moveFoldersToTop(entries: PathTreeEntry[] | undefined) {
+  return entries?.sort((a, b) => {
+    if (a.tree.size > 0 && b.tree.size > 0) return a.name.localeCompare(b.name);
+    if (a.tree.size > 0) return -1;
+    if (b.tree.size > 0) return 1;
+    return a.name.localeCompare(b.name);
   });
 }

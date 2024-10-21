@@ -1,15 +1,13 @@
-import { createEffect, createResource, createSignal, For } from "solid-js";
-import { fetchCommit, fetchCommits, fetchGitTree } from "./api";
+import { createEffect, createResource, createSignal } from "solid-js";
+import { fetchCommits } from "./api";
 import { CommitHistory } from "./components/commits/commit-history/commit-history";
-import type { ListCommitsEntry } from "../../core/src/github";
+import type { FullCommit, } from "../../core/src/github";
 import { FileTree } from "./components/files/file-tree/file-tree";
 import { CommitDetails } from "./components/commits/commit-details";
 
 export function App() {
   const [commits] = createResource(fetchCommits);
-  const [selectedCommit, selectCommit] = createSignal<ListCommitsEntry | undefined>(undefined);
-  const [commitDetails] = createResource(() => selectedCommit()?.sha, fetchCommit);
-  const [commitGitTree] = createResource(() => selectedCommit()?.commit.tree.sha, fetchGitTree);
+  const [selectedCommit, selectCommit] = createSignal<FullCommit | undefined>(undefined);
 
   createEffect(() => {
     if ((commits()?.length ?? 0) > 0 && !selectedCommit()) {
@@ -24,7 +22,9 @@ export function App() {
           commits={commits} 
           selectedCommit={selectedCommit} 
           selectCommit={selectCommit} />
-        <FileTree gitTree={commitGitTree} />
+        <FileTree 
+          gitTree={() => selectedCommit()?.tree} 
+          changedFiles={() => selectedCommit()?.files} />
       </div>
 
       <div class="h-full w-1/2 grow bg-zinc-100 rounded">
@@ -35,7 +35,7 @@ export function App() {
                 {selectedCommit()?.commit.message.split("\n")[0]} #{selectedCommit()?.sha.slice(-7)}
               </p>
             </div>
-            <CommitDetails commitDetails={commitDetails} />
+            <CommitDetails commit={selectedCommit} />
           </div>
         ) : (
           <div class="relative h-full w-full flex flex-col">
