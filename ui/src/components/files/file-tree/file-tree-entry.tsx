@@ -1,8 +1,8 @@
 import { createSignal, For } from "solid-js";
-import { cls } from "../../../base/styles"
-import { moveFoldersToTop, type PathTree, type PathTreeEntry } from "./logic";
+import { cls } from "../../../base/styles";
+import { moveFoldersToTop, type PathTreeEntry } from "./logic";
 
-const STATUS_STYLES: Record<string, string> = {
+export const STATUS_STYLES: Record<string, string> = {
   "added": "text-lime-600",
   "removed": "text-rose-600",
   "modified": "text-indigo-600",

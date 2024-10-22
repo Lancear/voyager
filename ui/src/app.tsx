@@ -4,6 +4,7 @@ import { CommitHistory } from "./components/commits/commit-history/commit-histor
 import type { FullCommit, } from "../../core/src/github";
 import { FileTree } from "./components/files/file-tree/file-tree";
 import { CommitDetails } from "./components/commits/commit-details";
+import { Stats } from "./components/stats/stats";
 
 export function App() {
   const [commits] = createResource(fetchCommits);
@@ -35,7 +36,10 @@ export function App() {
                 {selectedCommit()?.commit.message.split("\n")[0]} #{selectedCommit()?.sha.slice(-7)}
               </p>
             </div>
-            <CommitDetails commit={selectedCommit} />
+            <div class="w-full h-full flex flex-col gap-6 overflow-auto">
+              <CommitDetails commit={selectedCommit} />
+              <Stats commit={selectedCommit} commits={commits} />
+            </div>
           </div>
         ) : (
           <div class="relative h-full w-full flex flex-col">
