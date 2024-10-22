@@ -1,7 +1,7 @@
 import { createEffect, createResource, createSignal } from "solid-js";
 import { fetchCommits } from "./api";
 import { CommitHistory } from "./components/commits/commit-history/commit-history";
-import type { FullCommit, } from "../../core/src/github";
+import type { FullCommit } from "../../core/src/github";
 import { FileTree } from "./components/files/file-tree/file-tree";
 import { CommitDetails } from "./components/commits/commit-details";
 import { Stats } from "./components/stats/stats";
