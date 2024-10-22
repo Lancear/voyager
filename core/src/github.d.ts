@@ -25,13 +25,17 @@ export interface Commit {
   readonly files: {
     readonly sha: string;
     readonly filename: string;
-    /** e.g. added, modified */
+    /** e.g. added, modified, removed */
     readonly status: string;
     readonly additions: number;
     readonly deletions: number;
     readonly changes: number;
     readonly patch: string;
   }[];
+}
+
+export interface FullCommit extends Commit {
+  readonly tree: GitTree;
 }
 
 export type ListCommitsEntry = Omit<Commit, "files">;
@@ -62,10 +66,18 @@ export interface GitTreeObject {
   readonly mode: string;
 }
 
-export interface FetchPaginationOptions {
+export interface PaginationOptions {
   /** default: 30, max: 100 */
   readonly per_page?: number;
   readonly page?: number;
+}
+
+export interface Page<T = any> {
+  items: T[];
+  prev?: string;
+  next?: string;
+  first?: string;
+  last?: string;
 }
 
 export interface FetchGitTreeOptions {
@@ -80,7 +92,21 @@ export interface FetchGitTreeOptions {
  * @throws "Status code not ok" Error
  * @throws "Json parse failed" Error
  */
-export function fetchUrl(url: string, queryOptions?: object): Promise<unknown>;
+export function fetchUrl(url: string, queryOptions?: object): Promise<any>;
+
+/**
+ * Fetches a given github api url with pagination.
+ * 
+ * @throws "Fetch failed" Error
+ * @throws "Failed to get response body as text" Error
+ * @throws "Status code not ok" Error
+ * @throws "Json parse failed" Error
+ */
+export function fetchPaginatedUrl(
+  url: string,
+  paginationOptions?: PaginationOptions,
+  queryOptions?: object
+): Promise<Page>;
 
 /**
  * Fetches github commits.
@@ -92,8 +118,8 @@ export function fetchUrl(url: string, queryOptions?: object): Promise<unknown>;
  */
 export function fetchCommits(
   identityOrUrl: RepositoryIdentity | string,
-  options?: FetchPaginationOptions,
-): Promise<ListCommitsEntry[]>;
+  options?: PaginationOptions,
+): Promise<Page<ListCommitsEntry>>;
 
 /**
  * Fetches a given github commit.

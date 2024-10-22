@@ -29,11 +29,6 @@ export async function fetchUrl(url, queryOptions) {
       );
     }
 
-    console.log();
-    console.log("Response for", urlWithQuery);
-    console.log("Link header:", res.headers.get("link"));
-    console.log();
-
     try {
       return JSON.parse(bodyText);
     }
@@ -46,32 +41,71 @@ export async function fetchUrl(url, queryOptions) {
   }
 }
 
-/** @type {import("./github.js").fetchCommits} */
-export function fetchCommits(identityOrUrl, options) {
-  if (typeof identityOrUrl === "string") {
+/** @type {import("./github.js").fetchPaginatedUrl} */
+export async function fetchPaginatedUrl(url, paginationOptions, queryOptions) {
+  const urlWithQuery = paginationOptions || queryOptions
     // @ts-ignore
-    return fetchUrl(identityOrUrl, options);
+    ? url + "?" + new URLSearchParams({ ...queryOptions, ...paginationOptions })
+    : url;
+
+  const errorContext = { module: "github", paginated: true, urlWithQuery };
+
+  try {
+    const res = await fetch(urlWithQuery, {
+      headers: { Authorization: "Bearer " + GITHUB_TOKEN }
+    });
+
+    const bodyText = await res.text().catch(err => {
+      throw addErrorContext(err, "Failed to get response body as text", errorContext)
+    });
+
+    if (!res.ok) {
+      throw addErrorContext(
+        new HttpError("Status code not ok", res.status, bodyText),
+        errorContext
+      );
+    }
+
+    const linkHeader = res.headers.get("link");
+    const linkHeaderEntries = linkHeader?.split(",").map(
+      l => l.trim().slice(1, -1).split('>; rel="').reverse()
+    );
+
+    try {
+      const pageLinks = Object.fromEntries(linkHeaderEntries ?? []);
+      return Object.assign(pageLinks, { items: JSON.parse(bodyText) });
+    }
+    catch (err) {
+      throw addErrorContext(err, "Json parse failed", errorContext);
+    }
+  }
+  catch (err) {
+    throw addErrorContext(err, "Fetch failed", errorContext);
+  }
+}
+
+/** @type {import("./github.js").fetchCommits} */
+export function fetchCommits(identityOrUrl, paginationOptions) {
+  if (typeof identityOrUrl === "string") {
+    return fetchPaginatedUrl(identityOrUrl, paginationOptions);
   }
 
   const { owner, repository } = identityOrUrl;
 
-  // @ts-ignore
-  return fetchUrl(
+  return fetchPaginatedUrl(
     `${GITHUB_API_BASE_URL}/repos/${owner}/${repository}/commits`,
-    options,
+    paginationOptions,
   );
 }
 
 /** @type {import("./github.js").fetchCommit} */
 export function fetchCommit(identityOrUrl) {
   if (typeof identityOrUrl === "string") {
-    // @ts-ignore
     return fetchUrl(identityOrUrl);
   }
 
   const { owner, repository, sha } = identityOrUrl;
 
-  // @ts-ignore
   return fetchUrl(
     `${GITHUB_API_BASE_URL}/repos/${owner}/${repository}/commits/${sha}`
   );
@@ -80,30 +114,38 @@ export function fetchCommit(identityOrUrl) {
 /** @type {import("./github.js").fetchGitBlob} */
 export function fetchGitBlob(identityOrUrl) {
   if (typeof identityOrUrl === "string") {
-    // @ts-ignore
     return fetchUrl(identityOrUrl);
   }
 
   const { owner, repository, sha } = identityOrUrl;
 
-  // @ts-ignore
   return fetchUrl(
     `${GITHUB_API_BASE_URL}/repos/${owner}/${repository}/git/blobs/${sha}`
   );
 }
 
 /** @type {import("./github.js").fetchGitTree} */
-export function fetchGitTree(identityOrUrl, options) {
+export async function fetchGitTree(identityOrUrl, options) {
   if (typeof identityOrUrl === "string") {
-    // @ts-ignore
-    return fetchUrl(identityOrUrl, options);
+    const res = await fetchUrl(identityOrUrl, options);
+
+    if (res.truncated) {
+      console.warn("Truncated git tree fetched")
+    }
+
+    return res;
   }
 
   const { owner, repository, sha } = identityOrUrl;
 
-  // @ts-ignore
-  return fetchUrl(
+  const res = await fetchUrl(
     `${GITHUB_API_BASE_URL}/repos/${owner}/${repository}/git/trees/${sha}`,
     options,
   );
+
+  if (res.truncated) {
+    console.warn("Truncated git tree fetched")
+  }
+
+  return res;
 }

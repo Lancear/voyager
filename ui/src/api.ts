@@ -1,7 +1,7 @@
-import type { Commit, GitTree, ListCommitsEntry } from "../../core/src/github";
+import type { Commit, FullCommit, GitTree } from "../../core/src/github";
 
-export async function fetchCommits(): Promise<ListCommitsEntry[]> {
-  const res = await fetch("http://localhost:3300/commits");
+export async function fetchCommits(): Promise<FullCommit[]> {
+  const res = await fetch("http://localhost:3300/full/commits");
   return res.json();
 }
 
