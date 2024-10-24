@@ -1,15 +1,16 @@
-import { createSignal, For, type Accessor } from "solid-js";
+import { createSignal, For, Show, type Accessor } from "solid-js";
 import { cls } from "../../../base/styles";
 import type { Commit, GitTree, } from "../../../../../core/src/github";
 import { FileTreeEntry } from "./file-tree-entry";
-import { gitPathTree, moveFoldersToTop } from "./logic";
+import { gitPathTree, moveFoldersToTop, type PathTreeEntry } from "./logic";
 
 export interface CommitTimelineProps {
   gitTree: Accessor<GitTree | undefined>;
-  changedFiles: Accessor<Commit["files"] | undefined>
+  changedFiles: Accessor<Commit["files"] | undefined>;
+  openFile(file: PathTreeEntry): void;
 }
 
-export function FileTree({ gitTree, changedFiles }: CommitTimelineProps) {
+export function FileTree({ gitTree, changedFiles, openFile }: CommitTimelineProps) {
   const [opened, open] = createSignal(true);
   const pathTree = () => gitPathTree(gitTree(), changedFiles());
 
@@ -29,7 +30,7 @@ export function FileTree({ gitTree, changedFiles }: CommitTimelineProps) {
         )}
       >
         <svg
-          class={cls("size-4  shrink-0 stroke-zinc-500", opened() && "rotate-90")}
+          class={cls("size-4 shrink-0 stroke-zinc-500", opened() && "rotate-90")}
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -40,15 +41,15 @@ export function FileTree({ gitTree, changedFiles }: CommitTimelineProps) {
         </svg>
         <p class="text-zinc-800 text-lg">File Tree</p>
       </div>
-      {opened() && (
+      <Show when={opened()}>
         <div class="w-full h-full py-1.5 flex flex-col overflow-auto">
           <For each={moveFoldersToTop(pathTree()?.values().toArray())}>
             {(entry) => (
-              <FileTreeEntry entry={entry} />
+              <FileTreeEntry entry={entry} openFile={openFile} />
             )}
           </For>
         </div>
-      )}
+      </Show>
     </div>
   );
 }

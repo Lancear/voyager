@@ -1,7 +1,10 @@
 import type { Commit, GitTree } from "../../../../../core/src/github";
 
 export interface PathTreeEntry {
+  /** Only set for files */
+  sha?: string;
   name: string;
+  /** Empty for files */
   tree: PathTree;
   path: string;
   status?: string;
@@ -37,6 +40,7 @@ export function gitPathTree(
 
     const name = pathParts.at(-1)!;
     cursor.set(name, {
+      sha: file.sha,
       name: name,
       path: file.filename,
       status: file.status,
@@ -50,7 +54,7 @@ export function gitPathTree(
     let cursor = pathTree;
     const pathParts = entry.path.split("/");
 
-    for (let idx = 0; idx < pathParts.length; idx++) {
+    for (let idx = 0; idx < pathParts.length - 1; idx++) {
       const name = pathParts[idx];
 
       if (!cursor.has(name)) {
@@ -63,6 +67,14 @@ export function gitPathTree(
 
       cursor = cursor.get(name)?.tree!;
     }
+
+    const name = pathParts.at(-1)!;
+    cursor.set(name, {
+      sha: entry.sha,
+      name: name,
+      path: entry.path,
+      tree: new Map(),
+    });
   }
 
   return pathTree;

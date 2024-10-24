@@ -63,7 +63,7 @@ export function FileChangeStats({ commit, commits }: FileChangeStatsProps) {
     return cumulativeStats;
   };
 
-  const [opened, open] = createSignal(true);
+  const [opened, open] = createSignal(false);
 
   return (
     <div class="pt-1 pb-2 px-3">

@@ -1,21 +1,19 @@
-import type { Accessor, Setter } from "solid-js";
+import type { Accessor } from "solid-js";
 import type { FullCommit } from "../../../../../core/src/github";
 import { formatDate, formatDateTime } from "../../../base/date";
-import { cls } from "../../../base/styles"
+import { cls } from "../../../base/styles";
 
 export interface CommitHistoryEntryProps {
   commit: FullCommit;
   selected: Accessor<boolean>;
-  selectCommit: Setter<FullCommit | undefined>;
+  openCommit(commit: FullCommit): void;
 }
 
-export function CommitHistoryEntry({ commit, selected, selectCommit }: CommitHistoryEntryProps) {
+export function CommitHistoryEntry({ commit, selected, openCommit }: CommitHistoryEntryProps) {
   return (
     <div class="py-0.5 px-1" data-sha={commit.sha}>
       <div 
-        onClick={() => selectCommit(
-          selectedCommit => selectedCommit?.sha === commit.sha ? undefined : commit
-        )}
+        onClick={() => openCommit(commit)}
         class={cls(
           "py-1 px-2 rounded cursor-pointer hover:bg-indigo-500 hover:bg-opacity-10 transition-all", 
           selected() && "border-l-4 border-indigo-400"

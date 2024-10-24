@@ -109,6 +109,23 @@ app.get("/git/trees/:sha", async (ctx) => {
   }
 });
 
+app.get("/git/blobs/:sha", async (ctx) => {
+  const { sha } = ctx.req.param()
+
+  try {
+    const gitBlob = await github.fetchGitBlob(
+      { owner, repository, sha },
+    );
+
+    ctx.status(200);
+    return ctx.json(gitBlob);
+  }
+  catch (err) {
+    ctx.status(400);
+    return ctx.json({ err });
+  }
+});
+
 serve(
   { fetch: app.fetch, hostname: "localhost", port: 3300 },
   (info) => console.log(`Server running at http://localhost:${info.port}`),

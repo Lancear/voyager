@@ -16,7 +16,7 @@ export function ChangedFile({ file }: ChangedFileProps) {
         class="p-1 flex gap-1 items-center rounded cursor-pointer hover:bg-zinc-200 transition-all"
       >
         <svg
-          class={cls("size-3 shrink-0 stroke-zinc-400", opened() && "rotate-90")}
+          class={cls("size-3 shrink-0 stroke-zinc-500", opened() && "rotate-90")}
           xmlns="http://www.w3.org/2000/svg" 
           fill="none" 
           viewBox="0 0 24 24" 

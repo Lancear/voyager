@@ -1,4 +1,4 @@
-import { createSignal, For, type Accessor, type Resource, type Setter } from "solid-js";
+import { createSignal, For, Show, type Accessor, type Resource } from "solid-js";
 import { CommitHistoryEntry } from "./commit-history-entry";
 import type { FullCommit } from "../../../../../core/src/github";
 import { cls } from "../../../base/styles";
@@ -6,10 +6,10 @@ import { cls } from "../../../base/styles";
 export interface CommitHistoryProps {
   commits: Resource<FullCommit[]>;
   selectedCommit: Accessor<FullCommit | undefined>;
-  selectCommit: Setter<FullCommit | undefined>;
+  openCommit(commit: FullCommit): void;
 }
 
-export function CommitHistory({ commits, selectedCommit, selectCommit }: CommitHistoryProps) {
+export function CommitHistory({ commits, selectedCommit, openCommit }: CommitHistoryProps) {
   const [opened, open] = createSignal(true);
 
   return (
@@ -39,18 +39,18 @@ export function CommitHistory({ commits, selectedCommit, selectCommit }: CommitH
         </svg>
         <p class="text-zinc-800 text-lg">Commit History</p>
       </div>
-      {opened() && (
+      <Show when={opened()}>
         <div class="w-full h-full py-1.5 flex flex-col overflow-auto">
           <For each={commits()}>
             {(commit) => (
               <CommitHistoryEntry 
                 commit={commit} 
                 selected={() => selectedCommit()?.sha === commit.sha} 
-                selectCommit={selectCommit} />
+                openCommit={openCommit} />
             )}
           </For>
         </div> 
-      )}
+      </Show>
     </div>
   );
 }

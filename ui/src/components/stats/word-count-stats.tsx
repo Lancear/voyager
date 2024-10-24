@@ -41,7 +41,7 @@ export interface WordCountStatsProps {
 export function WordCountStats({ commit }: WordCountStatsProps) {
   const wordCountStats = () => getWordCountStats(commit());
 
-  const [opened, open] = createSignal(true);
+  const [opened, open] = createSignal(false);
 
   return (
     <div class="pt-1 pb-2 px-3">
